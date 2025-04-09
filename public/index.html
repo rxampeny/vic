@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta property="og:image" content="escola-victor-catala.jpg">
+    <link rel="icon" href="escola-victor-catala.jpg" type="image/jpeg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:image" content="https://victor-catala-1971.netlify.app/images/escola-victor-catala.jpg">
+    <meta property="og:title" content="Víctor Català 1971">
+    <meta property="og:description" content="Pàgina dedicada a l'escola Víctor Català, promoció de 1971">
+    <meta property="og:type" content="website">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://victor-catala-1971.netlify.app/victor-catala-1971.html">
+    <title>Víctor Català 1971</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+    <!-- Estilos del Chatbot -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 100%;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+        
+        h1 img {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        select {
+            margin-bottom: 15px;
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        #chartContainer {
+            height: 60vh; /* Responsive height */
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .imatge-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .imatge-container img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        /* Estilos para el modal de contraseña */
+        #passwordModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .login-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 85%;
+            max-width: 350px;
+        }
+        
+        .login-container img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        
+        .login-container h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .login-container p {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .login-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+        
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        #logoutButton {
+            padding: 8px 15px;
+            margin: 10px 0;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            align-self: flex-end;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Estilos del chatbot personalizado */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a6ea9, #6a8eca);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            align-self: flex-end;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        .chatbot-window {
+            display: none;
+            flex-direction: column;
+            height: 450px;
+            border-radius: 12px;
+            background-color: white;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #4a6ea9, #6a8eca);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .chatbot-close {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .chatbot-message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .chatbot-message-user {
+            background-color: #e1f5fe;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chatbot-message-bot {
+            background-color: #f1f1f1;
+            margin-right: auto;
+        }
+
+        .chatbot-input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+            background-color: white;
+        }
+
+        .chatbot-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-send {
+            background-color: #4a6ea9;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .chatbot-typing {
+            display: none;
+            padding: 10px;
+            font-style: italic;
+            color: #888;
+        }
+
+        .chatbot-message img {
+            max-width: 200px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: block;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        
+        .chatbot-retry-message {
+            font-style: italic;
+            text-align: center;
+            color: #888;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        /* Botón flotante para cerrar sesión en móviles */
+        @media (max-width: 768px) {
+            #logoutButton {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 100;
+                padding: 10px 15px;
+                border-radius: 30px;
+            }
+            
+            .mainContent {
+                width: 100%;
+            }
+            
+            .container {
+                margin-bottom: 60px; /* Espacio para el botón flotante */
+            }
+            
+            /* Ajustes para el chatbot en móviles */
+            .chatbot-container {
+                width: 100%;
+                bottom: 70px; /* Para no tapar el botón de logout */
+                right: 0;
+                padding: 0 10px;
+            }
+            
+            .chatbot-window {
+                width: 100%;
+                border-radius: 0;
+                height: 80vh;
+                max-height: 80vh;
+            }
+            
+            .chatbot-button {
+                bottom: 20px;
+                right: 20px;
+                position: fixed;
+            }
+            
+            /* Mejorar interacción táctil */
+            .chatbot-send {
+                padding: 12px 20px;
+                min-width: 60px;
+            }
+            
+            .chatbot-input {
+                font-size: 16px; /* Evita zoom en iOS */
+                padding: 12px;
+            }
+        }
+        
+        /* Ocultar el contenido principal hasta que se verifique la contraseña */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de contraseña -->
+    <div id="passwordModal" class="">
+        <div class="login-container">
+            <img src="escola-victor-catala.jpg" alt="Víctor Català">
+            <h2>Víctor Català 1971</h2>
+            <p>Si us plau, introdueix la contrassenya per accedir:</p>
+            <input type="password" id="passwordInput" placeholder="contrassenya">
+            <button onclick="checkPassword()">Accedir</button>
+        </div>
+    </div>
+
+    <!-- Contenido principal (inicialmente oculto) -->
+    <div class="mainContent hidden">
+        <button id="logoutButton">Tancar sessió</button>
+        
+        <div class="container">
+            <h1><img src="escola-victor-catala.jpg" alt="Víctor Català">Víctor Català 1971</h1>
+            <div class="imatge-container">
+                <img src="escola-victor-catala.jpg" alt="Imatge de l'escola Víctor Català" />
+            </div>
+            <select id="mesSelector" style="display: none;"></select>
+            <div id="chartContainer">
+                <canvas id="aniversarisChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Chatbot personalizado -->
+        <div class="chatbot-container">
+            <div class="chatbot-window" id="chatbotWindow">
+                <div class="chatbot-header">
+                    <h3>Assistent Víctor Català</h3>
+                    <span class="chatbot-close" id="chatbotClose">✕</span>
+                </div>
+                <div class="chatbot-messages" id="chatbotMessages">
+                    <!-- Mensajes del chat aparecerán aquí -->
+                </div>
+                <div class="chatbot-typing" id="chatbotTyping">Escribiendo...</div>
+                <div class="chatbot-input-container">
+                    <input type="text" class="chatbot-input" id="chatbotInput" placeholder="En què et puc ajudar...">
+                    <button class="chatbot-send" id="chatbotSend">Enviar</button>
+                </div>
+            </div>
+            <div class="chatbot-button" id="chatbotButton">
+                <span>💬</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de contraseña
+        const correctPassword = "VC1971"; // Contraseña
+        
+        // Comprobar si ya estamos autenticados
+        if (localStorage.getItem('victorCatalaAuth') === 'true') {
+            document.getElementById('passwordModal').classList.add('hidden');
+            document.querySelector('.mainContent').classList.remove('hidden');
+        }
+        
+        // Función para verificar la contraseña
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === correctPassword) {
+                // Guardar el estado de autenticación
+                localStorage.setItem('victorCatalaAuth', 'true');
+                
+                // Ocultar el modal y mostrar el contenido
+                document.getElementById('passwordModal').classList.add('hidden');
+                document.querySelector('.mainContent').classList.remove('hidden');
+            } else {
+                alert('Contrassenya incorrecta. Si us plau, intenta-ho novament.');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        
+        // Permitir usar Enter para enviar la contraseña
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // Funcionalidad para cerrar sesión
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            localStorage.removeItem('victorCatalaAuth');
+            document.getElementById('passwordModal').classList.remove('hidden');
+            document.querySelector('.mainContent').classList.add('hidden');
+            document.getElementById('passwordInput').value = '';
+        });
+        
+        // Código original - Gráfico de aniversarios
+        const dadesAniversaris = [
+            {nom: "César Márquez García", mes: 4, dia: 4},
+            {nom: "Ángela", mes: 8, dia: 5},
+            {nom: "Carlos Herrero", mes: 6, dia: 13},
+            {nom: "Fermín", mes: 10, dia: 6},
+            {nom: "Javier Alcázar", mes: 10, dia: 11},
+            {nom: "Josele", mes: 4, dia: 4},
+            {nom: "MªJosé García", mes: 7, dia: 19},
+            {nom: "Óscar Guardado", mes: 8, dia: 6},
+            {nom: "Yolanda Vicente", mes: 6, dia: 11},
+            {nom: "Yolanda Martín", mes: 7, dia: 18},
+            {nom: "Txema", mes: 12, dia: 10},
+            {nom: "Tito", mes: 3, dia: 26},
+            {nom: "Rubén Claver", mes: 7, dia: 16},
+            {nom: "Rosa Garriz", mes: 1, dia: 30},
+            {nom: "Roberto León", mes: 12, dia: 4},
+            {nom: "Ricardo Sirera", mes: 2, dia: 24},
+            {nom: "Rafa Xampeny", mes: 2, dia: 19},
+            {nom: "Pedro Cilleruelo", mes: 7, dia: 11},
+            {nom: "Nuria Romero", mes: 2, dia: 15},
+            {nom: "Mónica Sánchez", mes: 1, dia: 5},
+            {nom: "Mónica Pérez", mes: 12, dia: 7},
+            {nom: "Mónica Fdez.", mes: 5, dia: 6},
+            {nom: "Mar Gutiérrez", mes: 9, dia: 17},
+            {nom: "Lyss Miró", mes: 11, dia: 14},
+            {nom: "Luqui Luján", mes: 9, dia: 22},
+            {nom: "Loli Arjona", mes: 3, dia: 20},
+            {nom: "Juanjo Hierro", mes: 8, dia: 9},
+            {nom: "Juan Luis López", mes: 9, dia: 13},
+            {nom: "José Antonio Pérez", mes: 10, dia: 23},
+            {nom: "Joel Solana", mes: 2, dia: 2},
+            {nom: "Javier Castilla", mes: 4, dia: 19},
+            {nom: "Ismael Sopena", mes: 8, dia: 11},
+            {nom: "Irene Martínez", mes: 12, dia: 20},
+            {nom: "Elena Andújar", mes: 1, dia: 21},
+            {nom: "Carles Boldú", mes: 1, dia: 21},
+            {nom: "Cori Cuquejo", mes: 2, dia: 26},
+            {nom: "Salud", mes: 2, dia: 26},
+            {nom: "Conchi Navarro", mes: 6, dia: 17},
+            {nom: "Conchi Chueca", mes: 5, dia: 20},
+            {nom: "Pilar Charles", mes: 4, dia: 27},
+            {nom: "David Rosique", mes: 3, dia: 19}			
+        ];
+
+        let chart;
+
+        function getDiesMes(mes, any = 2025) {
+            return new Date(any, mes, 0).getDate();
+        }
+
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * 200 + 55);
+            const g = Math.floor(Math.random() * 200 + 55);
+            const b = Math.floor(Math.random() * 200 + 55);
+            return `rgba(${r}, ${g}, ${b}, 0.6)`;
+        }
+
+        function actualitzarGrafic(mes) {
+            const aniversarisMes = dadesAniversaris.filter(d => d.mes === parseInt(mes));
+            aniversarisMes.sort((a, b) => a.dia - b.dia);
+
+            const diesMes = getDiesMes(mes);
+
+            const data = {
+                labels: aniversarisMes.map(d => `${d.dia} - ${d.nom}`),
+                datasets: [{
+                    label: 'Dia de l\'aniversari',
+                    data: aniversarisMes.map(d => d.dia),
+                    backgroundColor: aniversarisMes.map(() => getRandomColor()),
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 1
+                }]
+            };
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const ctx = document.getElementById('aniversarisChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: diesMes,
+                            title: {
+                                display: true,
+                                text: 'Dia del mes'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                autoSkip: false,
+                                font: {
+                                    size: function(context) {
+                                        // Ajustar el tamaño de la fuente según el dispositivo
+                                        const width = window.innerWidth;
+                                        return width < 768 ? 10 : 12;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Aniversaris de ${document.getElementById('mesSelector').options[document.getElementById('mesSelector').selectedIndex].text}`,
+                            font: {
+                                size: function(context) {
+                                    // Ajustar el tamaño de la fuente según el dispositivo
+                                    const width = window.innerWidth;
+                                    return width < 768 ? 14 : 16;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            anchor: 'start',
+                            align: 'end',
+                            formatter: function(value, context) {
+                                return value;
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: function(context) {
+                                    // Ajustar el tamaño de la fuente según el dispositivo
+                                    const width = window.innerWidth;
+                                    return width < 768 ? 10 : 12;
+                                }
+                            },
+                            color: 'black',
+                            offset: 4
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('mesSelector').addEventListener('change', function() {
+            actualitzarGrafic(this.value);
+        });
+
+        // Inicialitzar amb el mes actual
+        window.addEventListener('load', function() {
+            const mesActual = new Date().getMonth() + 1;
+            const mesSelector = document.getElementById('mesSelector');
+            const mesos = ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+            mesos.forEach((mes, index) => {
+                const option = document.createElement('option');
+                option.value = index + 1;
+                option.text = mes;
+                mesSelector.appendChild(option);
+            });
+            mesSelector.value = mesActual;
+            actualitzarGrafic(mesActual);
+            mesSelector.style.display = 'block';
+            
+            // Ajustar el diseño para dispositivos móviles
+            checkMobileSize();
+
+            // Inicializar el chatbot
+            initChatbot();
+        });
+        
+        // Ajustar tamaño al cambiar la orientación del dispositivo
+        window.addEventListener('resize', function() {
+            checkMobileSize();
+            // Actualizar el gráfico para que se ajuste al nuevo tamaño
+            const mesSelector = document.getElementById('mesSelector');
+            if (mesSelector && mesSelector.value) {
+                actualitzarGrafic(mesSelector.value);
+            }
+        });
+        
+        // Función para ajustar la interfaz en dispositivos móviles
+        function checkMobileSize() {
+            if (window.innerWidth <= 768) {
+                // Ajustes específicos para móviles
+                document.querySelectorAll('.imatge-container img').forEach(img => {
+                    img.style.maxWidth = '90%';
+                });
+            } else {
+                // Ajustes para escritorio
+                document.querySelectorAll('.imatge-container img').forEach(img => {
+                    img.style.maxWidth = '60%';
+                });
+            }
+        }
+
+        // Funciones para el chatbot personalizado
+        function initChatbot() {
+            const chatbotButton = document.getElementById('chatbotButton');
+            const chatbotWindow = document.getElementById('chatbotWindow');
+            const chatbotClose = document.getElementById('chatbotClose');
+            const chatbotSend = document.getElementById('chatbotSend');
+            const chatbotInput = document.getElementById('chatbotInput');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            const chatbotTyping = document.getElementById('chatbotTyping');
+
+            // Generar un ID de sesión único
+            let sessionId = localStorage.getItem('chatSessionId');
+            if (!sessionId) {
+                sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('chatSessionId', sessionId);
+            }
+
+            // Variable para controlar si el chatbot está listo
+            let isChatbotReady = false;
+
+            // Al cargar la página, verificar si el servidor está activo
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Servidor activo desde:', data.time);
+                    isChatbotReady = true;
+                    chatbotButton.style.opacity = "1";
+                })
+                .catch(error => {
+                    console.error('Error conectando con el servidor:', error);
+                    // Mostrar mensaje de "calentando servidor" en el botón
+                    chatbotButton.innerHTML = "<span>🔄</span>";
+                    chatbotButton.title = "Iniciando el servidor...";
+                    
+                    // Reintentar cada 3 segundos
+                    const interval = setInterval(() => {
+                        fetch('/api/status')
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Servidor activo desde:', data.time);
+                                isChatbotReady = true;
+                                chatbotButton.innerHTML = "<span>💬</span>";
+                                chatbotButton.title = "Chatbot disponible";
+                                chatbotButton.style.opacity = "1";
+                                clearInterval(interval);
+                            })
+                            .catch(error => console.error('Reintentando conexión...'));
+                    }, 3000);
+                });
+
+            // Abrir/cerrar ventana del chat
+            chatbotButton.addEventListener('click', function() {
+                if (!isChatbotReady) {
+                    alert("El servidor se está iniciando, por favor espera unos segundos.");
+                    return;
+                }
+                
+                chatbotWindow.style.display = 'flex';
+                chatbotButton.style.display = 'none';
+                
+                // Si es la primera vez que se abre, mostrar mensaje de bienvenida
+                if (chatbotMessages.children.length === 0) {
+                    addBotMessage("Hola! 👋");
+                    setTimeout(() => {
+                        addBotMessage(`
+                            <img src="escola-victor-catala.jpg" alt="Víctor Català">
+                            <div>Em dic Caterina Albert i Paradís (nom de ploma Víctor Català). Quin aniversari o telèfon vols consultar? També et dono informació de l'escola i de mi mateixa...</div>
+                        `);
+                    }, 500);
+                }
+                
+                // Scroll al final de los mensajes
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            });
+
+            chatbotClose.addEventListener('click', function() {
+                chatbotWindow.style.display = 'none';
+                chatbotButton.style.display = 'flex';
+            });
+
+            // Función para enviar mensajes
+            function sendMessage() {
+                const message = chatbotInput.value.trim();
+                if (!message) return;
+
+                // Añadir mensaje al chat
+                addUserMessage(message);
+                chatbotInput.value = '';
+
+                // Mostrar indicador de escritura
+                chatbotTyping.style.display = 'block';
+
+                // URL de la API
+                const apiUrl = '/api/chat';
+                
+                // Implementar reintentos con backoff exponencial
+                let retryCount = 0;
+                const maxRetries = 3;
+                
+                function attemptSend() {
+                    // Enviar mensaje al servidor
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chatInput: message,
+                            sessionId: sessionId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Ocultar indicador de escritura
+                        chatbotTyping.style.display = 'none';
+                        
+                        // Añadir respuesta del bot
+                        if (data.type === 'message') {
+                            addBotMessage(data.content);
+                        } else {
+                            addBotMessage("Lo siento, ha ocurrido un error. Por favor, inténtalo de nuevo.");
+                        }
+                        
+                        // Scroll al final de los mensajes
+                        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        if (retryCount < maxRetries) {
+                            retryCount++;
+                            const delay = retryCount * 1000; // Backoff exponencial
+                            
+                            // Mostrar mensaje de reintento
+                            const retryMsg = document.createElement('div');
+                            retryMsg.className = 'chatbot-retry-message';
+                            retryMsg.textContent = `Reintentando en ${delay/1000} segundos...`;
+                            chatbotMessages.appendChild(retryMsg);
+                            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                            
+                            setTimeout(() => {
+                                if (chatbotMessages.contains(retryMsg)) {
+                                    chatbotMessages.removeChild(retryMsg);
+                                }
+                                attemptSend();
+                            }, delay);
+                       		
+							} else {
+                            chatbotTyping.style.display = 'none';
+                            addBotMessage("Lo siento, hay problemas de conexión. Por favor, intenta más tarde.");
+                        }
+                    });
+                }
+                
+                attemptSend();
+            }
+
+            // Enviar mensaje al hacer clic en el botón o presionar Enter
+            chatbotSend.addEventListener('click', sendMessage);
+            chatbotInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Función para añadir mensaje del usuario al chat
+            function addUserMessage(message) {
+                const msgElement = document.createElement('div');
+                msgElement.className = 'chatbot-message chatbot-message-user';
+                msgElement.textContent = message;
+                chatbotMessages.appendChild(msgElement);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
+
+            // Función para añadir mensaje del bot al chat
+            function addBotMessage(message) {
+                const msgElement = document.createElement('div');
+                msgElement.className = 'chatbot-message chatbot-message-bot';
+                msgElement.innerHTML = message;
+                chatbotMessages.appendChild(msgElement);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>							
