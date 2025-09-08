@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Víctor Català 1971</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 100%;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+        }
+        select {
+            margin-bottom: 15px;
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+        }
+        .imatge-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        #logoutButton {
+            padding: 8px 15px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            align-self: flex-end;
+            margin-bottom: 10px;
+        }
+        .checkbox-container {
+            margin-bottom: 15px;
+        }
+        .hidden {
+            display: none !important;
+        }
+    
+#chartContainer {
+    height: 400px;
+    min-height: 400px;
+    margin-top: 20px;
+    padding: 0;
+    position: relative;
+}
+
+#aniversarisChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+</style>
+</head>
+<body>
+    <!-- Modal de contraseña -->
+    <div id="passwordModal">
+        <div class="container" style="text-align:center;">
+            <h2>Víctor Català 1971</h2>
+            <p>Si us plau, introdueix la contrassenya per accedir:</p>
+            <input type="password" id="passwordInput" placeholder="contrassenya">
+            <br><br>
+            <button onclick="checkPassword()">Accedir</button>
+        </div>
+    </div>
+
+    <div class="mainContent hidden">
+        <button id="logoutButton">Tancar sessió</button>
+
+        <div class="container">
+            <h1>Víctor Català 1971</h1>
+
+            <div class="imatge-container">
+                <video autoplay muted loop playsinline poster="escola-victor-catala.jpg" style="max-width: 80%; height: auto; border-radius: 8px;">
+                    <source src="video-escola.mp4" type="video/mp4">
+                    <img src="escola-victor-catala.jpg" alt="Imatge de l'escola Víctor Català" style="max-width: 80%; height: auto; border-radius: 8px;">
+                </video>
+            </div>
+
+            <select id="mesSelector"></select>
+
+            <div class="checkbox-container">
+                <label><input type="checkbox" id="mostrarTelefons"> Mostrar telèfons a les barres</label>
+            </div>
+
+            <div id="chartContainer">
+                <canvas id="aniversarisChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+
+    <script>
+        let dadesAniversaris = [];
+        const correctPassword = "VC1971";
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === correctPassword) {
+                localStorage.setItem('victorCatalaAuth', 'true');
+                document.getElementById('passwordModal').style.display = 'none';
+                document.querySelector('.mainContent').classList.remove('hidden');
+
+                fetch('aniversaris.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        dadesAniversaris = data;
+                        const mesActual = new Date().getMonth() + 1;
+                        initializeApp(mesActual);
+                    });
+            } else {
+                alert('Contrassenya incorrecta. Si us plau, intenta-ho novament.');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('victorCatalaAuth') === 'true') {
+                document.getElementById('passwordModal').style.display = 'none';
+                document.querySelector('.mainContent').classList.remove('hidden');
+
+                fetch('aniversaris.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        dadesAniversaris = data;
+                        const mesActual = new Date().getMonth() + 1;
+                        initializeApp(mesActual);
+                    });
+            }
+
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+
+            document.getElementById('logoutButton').addEventListener('click', function() {
+                localStorage.removeItem('victorCatalaAuth');
+                document.getElementById('passwordModal').style.display = 'flex';
+                document.querySelector('.mainContent').classList.add('hidden');
+                document.getElementById('passwordInput').value = '';
+            });
+        });
+
+        let chart;
+
+        function initializeApp(mesInicial = 1) {
+            const mesSelector = document.getElementById('mesSelector');
+            const mesos = ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+
+            mesSelector.innerHTML = '';
+            mesos.forEach((mes, index) => {
+                const option = document.createElement('option');
+                option.value = index + 1;
+                option.text = mes;
+                mesSelector.appendChild(option);
+            });
+
+            mesSelector.value = mesInicial;
+            actualitzarGrafic(mesInicial);
+
+            mesSelector.addEventListener('change', function() {
+                actualitzarGrafic(this.value);
+            });
+
+            document.getElementById('mostrarTelefons').addEventListener('change', function() {
+                actualitzarGrafic(mesSelector.value);
+            });
+        }
+
+        function getPrefixForMonth(mesNumber) {
+            const mesos = ["", "Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+            const mesNom = mesos[parseInt(mesNumber)] || '';
+            const primeraLletra = mesNom.charAt(0).toLowerCase();
+            return ['a', 'e', 'i', 'o', 'u'].includes(primeraLletra) ? "d'" : "de ";
+        }
+
+        function getMesName(mesNumber) {
+            const mesos = ["", "Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+            return mesos[parseInt(mesNumber)] || 'Mes desconegut';
+        }
+
+        function actualitzarGrafic(mes) {
+            const aniversarisMes = dadesAniversaris.filter(d => d.mes === parseInt(mes));
+            aniversarisMes.sort((a, b) => a.dia - b.dia);
+
+            const mostrarTelefons = document.getElementById('mostrarTelefons').checked;
+
+            const data = {
+                labels: aniversarisMes.map(d => mostrarTelefons ? `${d.dia} - ${d.nom} (${d.telefon})` : `${d.dia} - ${d.nom}`),
+                datasets: [{
+                    label: "Dia de l'aniversari",
+                    data: aniversarisMes.map(d => d.dia),
+                    backgroundColor: aniversarisMes.map(() => `rgba(${Math.random()*200+55},${Math.random()*200+55},${Math.random()*200+55},0.6)`),
+                    borderColor: 'rgba(0,0,0,0.1)',
+                    borderWidth: 1
+                }]
+            };
+
+            if (chart) chart.destroy();
+
+            const ctx = document.getElementById('aniversarisChart').getContext('2d');
+            Chart.register(ChartDataLabels);
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    indexAxis: 'y',
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Aniversaris ${getPrefixForMonth(mes)}${getMesName(mes)}`,
+                            font: { size: 16 }
+                        },
+                        datalabels: {
+                            display: true,
+                            anchor: 'start',
+                            align: 'end',
+                            formatter: value => value,
+                            font: { weight: 'bold', size: 12 },
+                            color: 'black',
+                            offset: 4
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Dia del mes' }
+                        },
+                        y: {
+                            ticks: { autoSkip: false }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
