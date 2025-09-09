@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html lang="ca">
+<head>
+<meta content="escola-victor-catala.jpg" property="og:image"/>
+<link href="escola-victor-catala.jpg" rel="icon" type="image/jpeg"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="https://victor-catala-1971.netlify.app/images/escola-victor-catala.jpg" property="og:image"/>
+<meta content="Víctor Català 1971" property="og:title"/>
+<meta content="Pàgina dedicada a l'escola Víctor Català, promoció de 1971" property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="https://victor-catala-1971.netlify.app/victor-catala-1971.html" property="og:url"/>
+<title>Víctor Català 1971</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 100%;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+        
+        h1 img {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        select {
+            margin-bottom: 15px;
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        #chartContainer {
+            height: 60vh;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .imatge-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .imatge-container img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .checkbox-container {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .checkbox-container label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            margin: 0;
+            transform: scale(1.2);
+        }
+        
+        /* Estilos para el modal de contraseña */
+        #passwordModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .login-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 85%;
+            max-width: 350px;
+        }
+        
+        .login-container img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        
+        .login-container h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .login-container p {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .login-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+        
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        #logoutButton {
+            padding: 8px 15px;
+            margin: 10px 0;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            align-self: flex-end;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* Botón flotante para cerrar sesión en móviles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            h1 {
+                font-size: 1.2rem;
+            }
+            
+            .imatge-container img {
+                max-width: 95% !important;
+            }
+            
+            #logoutButton {
+                position: fixed;
+                bottom: 15px;
+                right: 15px;
+                z-index: 100;
+                padding: 8px 12px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+            }
+            
+            .mainContent {
+                width: 100%;
+            }
+            
+            .container {
+                margin-bottom: 50px;
+                padding: 10px;
+            }
+            
+            select {
+                font-size: 14px;
+                padding: 6px;
+            }
+            
+            .checkbox-container {
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .checkbox-container label {
+                font-size: 12px;
+            }
+            
+            #chartContainer {
+                height: 70vh;
+                margin-top: 5px;
+            }
+            
+            .login-container {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .login-container h2 {
+                font-size: 1.1rem;
+            }
+            
+            .login-container p {
+                font-size: 0.8rem;
+            }
+            
+            .login-container input {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .login-container button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+        
+        /* Mejoras adicionales para móviles muy pequeños */
+        @media (max-width: 480px) {
+            body {
+                padding: 2px;
+            }
+            
+            h1 {
+                font-size: 1rem;
+                margin: 5px 0;
+            }
+            
+            h1 img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .container {
+                padding: 8px;
+            }
+            
+            #chartContainer {
+                height: 65vh;
+            }
+            
+            select {
+                font-size: 12px;
+                padding: 5px;
+            }
+            
+            .checkbox-container label {
+                font-size: 11px;
+            }
+        }
+        
+        /* Ocultar el contenido principal hasta que se verifique la contraseña */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<!-- Modal de contraseña -->
+<div id="passwordModal">
+<div class="login-container">
+<img alt="Víctor Català" src="escola-victor-catala.jpg"/>
+<h2>Víctor Català 1971</h2>
+<p>Si us plau, introdueix la contrassenya per accedir:</p>
+<input id="passwordInput" placeholder="contrassenya" type="password"/>
+<button onclick="checkPassword()">Accedir</button>
+</div>
+</div>
+<!-- Contenido principal (inicialmente oculto) -->
+<div class="mainContent hidden">
+<button id="logoutButton">Tancar sessió</button>
+<div class="container">
+<h1><img alt="Víctor Català" src="escola-victor-catala.jpg"/>Víctor Català 1971</h1>
+<div class="imatge-container">
+<div class="video-wrapper" style="position: relative; width: 100%; max-width: 1000px; margin: auto;aspect-ratio: 16 / 9; background-color: #fff;">
+<video autoplay="" id="videoEscola" loop="" muted="" oncanplay="this.style.display='block'" playsinline="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;object-fit: cover; border-radius: 8px; display: block;">
+<source src="video-escola.mp4" type="video/mp4"/>
+</video>
+</div>
+</div>
+<select id="mesSelector"></select>
+<div class="checkbox-container">
+<label>
+<input id="mostrarTelefons" type="checkbox"/>
+                    Mostrar telèfons a les barres
+                </label>
+</div>
+<div id="chartContainer">
+<canvas id="aniversarisChart"></canvas>
+</div>
+</div>
+</div>
+<script>
+        // Sistema de contraseña
+        const correctPassword = "VC1971";
+        
+        // Función para verificar la contraseña
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === correctPassword) {
+                localStorage.setItem('victorCatalaAuth', 'true');
+                document.getElementById('passwordModal').style.display = 'none';
+                document.querySelector('.mainContent').classList.remove('hidden');
+
+        fetch('aniversaris.json')
+            .then(response => response.json())
+            .then(data => {
+                dadesAniversaris = data;
+                const mesActual = new Date().getMonth() + 1;
+                initializeApp(mesActual);
+            });
+                initializeApp();
+            } else {
+                alert('Contrassenya incorrecta. Si us plau, intenta-ho novament.');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        
+        // BASE DE DATOS COMPLETA CON TODOS LOS TELÉFONOS
+        let dadesAniversaris = [];
+
+fetch('aniversaris.json')
+    .then(response => response.json())
+    .then(data => {
+        dadesAniversaris = data;
+        // const mesActual eliminado: ahora viene como parámetro
+        initializeApp(mesActual);
+    });
+
+        let chart;
+
+        function getDiesMes(mes, any = 2025) {
+            return new Date(any, mes, 0).getDate();
+        }
+
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * 200 + 55);
+            const g = Math.floor(Math.random() * 200 + 55);
+            const b = Math.floor(Math.random() * 200 + 55);
+            return `rgba(${r}, ${g}, ${b}, 0.6)`;
+        }
+
+        function actualitzarGrafic(mes) {
+            const aniversarisMes = dadesAniversaris.filter(d => d.mes === parseInt(mes));
+            aniversarisMes.sort((a, b) => a.dia - b.dia);
+
+            const diesMes = getDiesMes(mes);
+            const mostrarTelefons = document.getElementById('mostrarTelefons').checked;
+
+            const data = {
+                labels: aniversarisMes.map(d => {
+                    if (mostrarTelefons && d.telefon && d.telefon.trim() !== "") {
+                        return `${d.dia} - ${d.nom} (${d.telefon})`;
+                    } else {
+                        return `${d.dia} - ${d.nom}`;
+                    }
+                }),
+                datasets: [{
+                    label: 'Dia de l\'aniversari',
+                    data: aniversarisMes.map(d => d.dia),
+                    backgroundColor: aniversarisMes.map(() => getRandomColor()),
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 1
+                }]
+            };
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const ctx = document.getElementById('aniversarisChart').getContext('2d');
+            
+            // Registrar el plugin de datalabels
+            Chart.register(ChartDataLabels);
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: diesMes,
+                            title: {
+                                display: true,
+                                text: 'Dia del mes'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                autoSkip: false,
+                                font: {
+                                    size: function(context) {
+                                        const width = window.innerWidth;
+                                        return width < 768 ? 10 : 12;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Aniversaris ${getPrefixForMonth(mes)}${getMesName(mes)}`,
+                            font: {
+                                size: function(context) {
+                                    const width = window.innerWidth;
+                                    return width < 768 ? 14 : 16;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            anchor: 'start',
+                            align: 'end',
+                            formatter: function(value, context) {
+                                return value;
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: function(context) {
+                                    const width = window.innerWidth;
+                                    return width < 768 ? 10 : 12;
+                                }
+                            },
+                            color: 'black',
+                            offset: 4
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function getMesName(mesNumber) {
+            const mesos = ["", "Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+            return mesos[parseInt(mesNumber)] || 'Mes desconegut';
+        }
+        function getPrefixForMonth(mesNumber) {
+            const mesos = ["", "Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+            const mesNom = mesos[parseInt(mesNumber)] || '';
+            const primeraLletra = mesNom.charAt(0).toLowerCase();
+
+            if (['a', 'e', 'i', 'o', 'u'].includes(primeraLletra)) {
+                return "d'";
+            } else {
+                return "de ";
+            }
+        }
+
+
+        function initializeApp(mesInicial = 1) {
+            // const mesActual eliminado: ahora viene como parámetro
+            const mesSelector = document.getElementById('mesSelector');
+            const mesos = ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+            
+            // Limpiar opciones existentes antes de añadir nuevas
+            mesSelector.innerHTML = '';
+            
+            // Llenar el selector de meses
+            mesos.forEach((mes, index) => {
+                const option = document.createElement('option');
+                option.value = index + 1;
+                option.text = mes;
+                mesSelector.appendChild(option);
+            });
+            
+            mesSelector.value = mesInicial;
+            actualitzarGrafic(mesInicial);
+            
+            // Añadir event listener para cambio de mes
+            mesSelector.addEventListener('change', function() {
+                actualitzarGrafic(this.value);
+            });
+            
+            // Añadir event listener para mostrar/ocultar teléfonos
+            document.getElementById('mostrarTelefons').addEventListener('change', function() {
+                actualitzarGrafic(mesSelector.value);
+            });
+            
+            checkMobileSize();
+        }
+
+        function checkMobileSize() {
+            if (window.innerWidth <= 768) {
+                document.querySelectorAll('.imatge-container img').forEach(img => {
+                    img.style.maxWidth = '90%';
+                });
+            } else {
+                document.querySelectorAll('.imatge-container img').forEach(img => {
+                    img.style.maxWidth = '60%';
+                });
+            }
+        }
+
+        // Event listeners
+        
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('victorCatalaAuth') === 'true') {
+        document.getElementById('passwordModal').style.display = 'none';
+        document.querySelector('.mainContent').classList.remove('hidden');
+
+        fetch('aniversaris.json')
+            .then(response => response.json())
+            .then(data => {
+                dadesAniversaris = data;
+                const mesActual = new Date().getMonth() + 1;
+                initializeApp(mesActual);
+            });
+    }
+
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
+
+    document.getElementById('logoutButton').addEventListener('click', function() {
+        localStorage.removeItem('victorCatalaAuth');
+        document.getElementById('passwordModal').style.display = 'flex';
+        document.querySelector('.mainContent').classList.add('hidden');
+        document.getElementById('passwordInput').value = '';
+    });
+});
+
+        
+        // Ajustar tamaño al cambiar la orientación del dispositivo
+        window.addEventListener('resize', function() {
+            checkMobileSize();
+            const mesSelector = document.getElementById('mesSelector');
+            if (mesSelector && mesSelector.value) {
+                actualitzarGrafic(mesSelector.value);
+            }
+        });
+    </script>
+</body>
+</html>
