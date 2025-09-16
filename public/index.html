@@ -72,10 +72,12 @@
             text-align:center;
         }
         #countdown {
-            font-size:1rem;
-            font-weight:bold;
-            color:#2c3e50;
-        }
+    font-size:0.9rem;   /* antes 1rem */
+    font-weight:normal; /* más ligero */
+    color:#2c3e50;
+    line-height:1.4;
+      }
+
         
         #chartContainer {
             height: 60vh;
@@ -417,11 +419,12 @@ function startCountdown() {
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        countdownEl.innerHTML = `
-            🎉 Pròxim aniversari: <strong>${nextBday.nom}</strong> (${nextBday.dia} ${getMesName(nextBday.mes)})<br>
-            ⏳ Falten ${days} dies, ${hours}h ${minutes}m ${seconds}s per a l’aniversari de <strong>${nextBday.nom}</strong><br><br>
-            👉 Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})
-        `;
+      countdownEl.innerHTML = `
+    🎉 Pròxim aniversari: <strong>${nextBday.nom}</strong> (${nextBday.dia} ${getMesName(nextBday.mes)})<br>
+    ⏳ Falten ${days} dies, ${hours}h ${minutes}m ${seconds}s<br><br>
+    👉 Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})
+`;
+
     }
 
     updateCountdown();
