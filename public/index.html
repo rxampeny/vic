@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta content="escola-victor-catala.jpg" property="og:image"/>
+<link href="escola-victor-catala.jpg" rel="icon" type="image/jpeg"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="https://victor-catala-1971.netlify.app/images/escola-victor-catala.jpg" property="og:image"/>
+<meta content="Víctor Català 1971" property="og:title"/>
+<meta content="Pàgina dedicada a l'escola Víctor Català, promoció de 1971" property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="https://victor-catala-1971.netlify.app/victor-catala-1971.html" property="og:url"/>
+<title>Víctor Català 1971</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    padding: 10px;
+}
+#countdown {
+    text-align:center;
+    margin:15px;
+    font-size:1.1rem;
+    font-weight:bold;
+    color:#2c3e50;
+}
+
+/* Countdown compacto y visual en móviles */
+@media (max-width: 600px) {
+    #countdown {
+        font-size: 0.9rem;
+        margin: 8px;
+        line-height: 1.4;
+        text-align: left;
+    }
+    #countdown strong {
+        display: inline;
+        font-size: 1rem;
+        color: #2c3e50;
+    }
+    #countdown .linea {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+    #countdown .icono {
+        width: 22px;
+        text-align: center;
+        margin-right: 6px;
+    }
+}
+</style>
+</head>
+<body>
+<!-- Modal de contraseña -->
+<div id="passwordModal">
+<div class="login-container">
+<img alt="Víctor Català" src="escola-victor-catala.jpg"/>
+<h2>Víctor Català 1971</h2>
+<p>Si us plau, introdueix la contrassenya per accedir:</p>
+<input id="passwordInput" placeholder="contrassenya" type="password"/>
+<button onclick="checkPassword()">Accedir</button>
+</div>
+</div>
+
+<!-- Contenido principal -->
+<div class="mainContent hidden">
+<button id="logoutButton">Tancar sessió</button>
+<div class="container">
+<h1><img alt="Víctor Català" src="escola-victor-catala.jpg"/>Víctor Català 1971</h1>
+<div class="imatge-container">
+<video autoplay loop muted playsinline poster="escola-victor-catala.jpg" style="max-width: 80%; height: auto; border-radius: 8px;">
+<source src="video-escola.mp4" type="video/mp4"/>
+<img alt="Imatge de l'escola Víctor Català" src="escola-victor-catala.jpg" style="max-width: 80%; height: auto; border-radius: 8px;"/>
+</video>
+</div>
+
+<select id="mesSelector"></select>
+<!-- 🔽 Countdown -->
+<div id="countdown"></div>
+
+<div class="checkbox-container">
+<label>
+<input id="mostrarTelefons" type="checkbox"/> Mostrar telèfons a les barres
+</label>
+</div>
+<div id="chartContainer">
+<canvas id="aniversarisChart"></canvas>
+</div>
+</div>
+</div>
+
+<script>
+const correctPassword = "VC1971";
+let dadesAniversaris = [];
+let chart;
+
+// Verificación contraseña
+function checkPassword() {
+    const password = document.getElementById('passwordInput').value;
+    if (password === correctPassword) {
+        localStorage.setItem('victorCatalaAuth', 'true');
+        document.getElementById('passwordModal').style.display = 'none';
+        document.querySelector('.mainContent').classList.remove('hidden');
+        fetch('aniversaris.json')
+            .then(response => response.json())
+            .then(data => {
+                dadesAniversaris = data;
+                const mesActual = new Date().getMonth() + 1;
+                initializeApp(mesActual);
+            });
+    } else {
+        alert('Contrassenya incorrecta. Si us plau, intenta-ho novament.');
+        document.getElementById('passwordInput').value = '';
+    }
+}
+
+// Obtener próximos 2 aniversarios
+function getNextBirthdays() {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+
+    let proxims = dadesAniversaris.map(d => {
+        let cumple = new Date(currentYear, d.mes - 1, d.dia);
+        if (cumple < today) cumple.setFullYear(currentYear + 1);
+        return { nom: d.nom, dia: d.dia, mes: d.mes, telefon: d.telefon, fecha: cumple };
+    });
+
+    proxims.sort((a, b) => a.fecha - b.fecha);
+    return proxims.slice(0, 2);
+}
+
+// Countdown
+function startCountdown() {
+    const countdownEl = document.getElementById("countdown");
+    const nextBdays = getNextBirthdays();
+    const nextBday = nextBdays[0];
+    const secondBday = nextBdays[1];
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const diff = nextBday.fecha - now;
+
+        if (diff <= 0) {
+            countdownEl.innerHTML = "🎂 Avui és l'aniversari de " + nextBday.nom + "!";
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        countdownEl.innerHTML = `
+            <div class="linea"><span class="icono">🎉</span>Pròxim aniversari: <strong>${nextBday.nom}</strong> (${nextBday.dia} ${getMesName(nextBday.mes)})</div>
+            <div class="linea"><span class="icono">⏳</span>Falten ${days} dies, ${hours}h ${minutes}m ${seconds}s per a l’aniversari de <strong>${nextBday.nom}</strong></div>
+            <div class="linea"><span class="icono">👉</span>Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})</div>
+        `;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+
+// Funciones gráficas y utilidades
+function getDiesMes(mes, any = 2025) { return new Date(any, mes, 0).getDate(); }
+function getRandomColor() {
+    const r = Math.floor(Math.random() * 200 + 55);
+    const g = Math.floor(Math.random() * 200 + 55);
+    const b = Math.floor(Math.random() * 200 + 55);
+    return `rgba(${r}, ${g}, ${b}, 0.6)`;
+}
+function actualitzarGrafic(mes) {
+    const aniversarisMes = dadesAniversaris.filter(d => d.mes === parseInt(mes));
+    aniversarisMes.sort((a, b) => a.dia - b.dia);
+    const diesMes = getDiesMes(mes);
+    const mostrarTelefons = document.getElementById('mostrarTelefons').checked;
+
+    const data = {
+        labels: aniversarisMes.map(d => mostrarTelefons && d.telefon ? `${d.dia} - ${d.nom} (${d.telefon})` : `${d.dia} - ${d.nom}`),
+        datasets: [{ label: "Dia de l'aniversari", data: aniversarisMes.map(d => d.dia), backgroundColor: aniversarisMes.map(() => getRandomColor()), borderColor: 'rgba(0,0,0,0.1)', borderWidth: 1 }]
+    };
+
+    if (chart) chart.destroy();
+    const ctx = document.getElementById('aniversarisChart').getContext('2d');
+    Chart.register(ChartDataLabels);
+
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { beginAtZero: true, max: diesMes, title: { display: true, text: 'Dia del mes' }},
+                y: { ticks: { autoSkip: false, font: { size: () => window.innerWidth < 768 ? 10 : 12 } } }
+            },
+            plugins: {
+                title: { display: true, text: `Aniversaris ${getPrefixForMonth(mes)}${getMesName(mes)}` },
+                datalabels: { display: true, anchor: 'start', align: 'end', formatter: v => v, font: { weight: 'bold', size: () => window.innerWidth < 768 ? 10 : 12 }, color: 'black', offset: 4 },
+                legend: { display: false }
+            }
+        }
+    });
+}
+function getMesName(mesNumber) {
+    const mesos = ["", "Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+    return mesos[parseInt(mesNumber)] || 'Mes desconegut';
+}
+function getPrefixForMonth(mesNumber) {
+    const mesos = ["", "Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+    const mesNom = mesos[parseInt(mesNumber)] || '';
+    const primeraLletra = mesNom.charAt(0).toLowerCase();
+    return ['a','e','i','o','u'].includes(primeraLletra) ? "d'" : "de ";
+}
+function initializeApp(mesInicial = 1) {
+    const mesSelector = document.getElementById('mesSelector');
+    const mesos = ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
+    mesSelector.innerHTML = '';
+    mesos.forEach((mes, index) => {
+        const option = document.createElement('option');
+        option.value = index + 1;
+        option.text = mes;
+        mesSelector.appendChild(option);
+    });
+    mesSelector.value = mesInicial;
+    actualitzarGrafic(mesInicial);
+    mesSelector.addEventListener('change', function() { actualitzarGrafic(this.value); });
+    document.getElementById('mostrarTelefons').addEventListener('change', function() { actualitzarGrafic(mesSelector.value); });
+    startCountdown();
+}
+
+// Eventos iniciales
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('victorCatalaAuth') === 'true') {
+        document.getElementById('passwordModal').style.display = 'none';
+        document.querySelector('.mainContent').classList.remove('hidden');
+        fetch('aniversaris.json')
+            .then(response => response.json())
+            .then(data => {
+                dadesAniversaris = data;
+                const mesActual = new Date().getMonth() + 1;
+                initializeApp(mesActual);
+            });
+    }
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkPassword(); });
+    document.getElementById('logoutButton').addEventListener('click', function() {
+        localStorage.removeItem('victorCatalaAuth');
+        document.getElementById('passwordModal').style.display = 'flex';
+        document.querySelector('.mainContent').classList.add('hidden');
+        document.getElementById('passwordInput').value = '';
+    });
+});
+</script>
+</body>
+</html>
+
