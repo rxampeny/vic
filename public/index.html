@@ -16,49 +16,305 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background-color: #f0f0f0;
-    padding: 10px;
-}
-#countdown {
-    text-align:center;
-    margin:15px;
-    font-size:1.1rem;
-    font-weight:bold;
-    color:#2c3e50;
-}
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 100%;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+        
+        h1 img {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        select {
+            margin-bottom: 15px;
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
 
-/* Countdown compacto y visual en móviles */
-@media (max-width: 600px) {
-    #countdown {
-        font-size: 0.9rem;
-        margin: 8px;
-        line-height: 1.4;
-        text-align: left;
-    }
-    #countdown strong {
-        display: inline;
-        font-size: 1rem;
-        color: #2c3e50;
-    }
-    #countdown .linea {
-        display: flex;
-        align-items: center;
-        margin-bottom: 4px;
-    }
-    #countdown .icono {
-        width: 22px;
-        text-align: center;
-        margin-right: 6px;
-    }
-}
-</style>
+        #countdownBox {
+            margin:15px 0;
+            padding:10px;
+            background:#f9f9f9;
+            border:1px solid #ddd;
+            border-radius:6px;
+            text-align:center;
+        }
+        #countdown {
+            font-size:1rem;
+            font-weight:bold;
+            color:#2c3e50;
+        }
+        
+        #chartContainer {
+            height: 60vh;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .imatge-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .imatge-container img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .checkbox-container {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .checkbox-container label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            margin: 0;
+            transform: scale(1.2);
+        }
+        
+        /* Estilos para el modal de contraseña */
+        #passwordModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .login-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 85%;
+            max-width: 350px;
+        }
+        
+        .login-container img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        
+        .login-container h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .login-container p {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .login-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+        
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        #logoutButton {
+            padding: 8px 15px;
+            margin: 10px 0;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            align-self: flex-end;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* Botón flotante para cerrar sesión en móviles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            h1 {
+                font-size: 1.2rem;
+            }
+            
+            .imatge-container img {
+                max-width: 95% !important;
+            }
+            
+            #logoutButton {
+                position: fixed;
+                bottom: 15px;
+                right: 15px;
+                z-index: 100;
+                padding: 8px 12px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+            }
+            
+            .mainContent {
+                width: 100%;
+            }
+            
+            .container {
+                margin-bottom: 50px;
+                padding: 10px;
+            }
+            
+            select {
+                font-size: 14px;
+                padding: 6px;
+            }
+            
+            .checkbox-container {
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .checkbox-container label {
+                font-size: 12px;
+            }
+            
+            #chartContainer {
+                height: 70vh;
+                margin-top: 5px;
+            }
+            
+            .login-container {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .login-container h2 {
+                font-size: 1.1rem;
+            }
+            
+            .login-container p {
+                font-size: 0.8rem;
+            }
+            
+            .login-container input {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .login-container button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+        
+        /* Mejoras adicionales para móviles muy pequeños */
+        @media (max-width: 480px) {
+            body {
+                padding: 2px;
+            }
+            
+            h1 {
+                font-size: 1rem;
+                margin: 5px 0;
+            }
+            
+            h1 img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .container {
+                padding: 8px;
+            }
+            
+            #chartContainer {
+                height: 65vh;
+            }
+            
+            select {
+                font-size: 12px;
+                padding: 5px;
+            }
+            
+            .checkbox-container label {
+                font-size: 11px;
+            }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
 <!-- Modal de contraseña -->
@@ -71,7 +327,6 @@ body {
 <button onclick="checkPassword()">Accedir</button>
 </div>
 </div>
-
 <!-- Contenido principal -->
 <div class="mainContent hidden">
 <button id="logoutButton">Tancar sessió</button>
@@ -83,28 +338,30 @@ body {
 <img alt="Imatge de l'escola Víctor Català" src="escola-victor-catala.jpg" style="max-width: 80%; height: auto; border-radius: 8px;"/>
 </video>
 </div>
-
 <select id="mesSelector"></select>
-<!-- 🔽 Countdown -->
-<div id="countdown"></div>
+
+<!-- 🔽 Countdown añadido sin alterar estructura -->
+<div id="countdownBox">
+  <div id="countdown"></div>
+</div>
 
 <div class="checkbox-container">
 <label>
-<input id="mostrarTelefons" type="checkbox"/> Mostrar telèfons a les barres
-</label>
+<input id="mostrarTelefons" type="checkbox"/>
+                    Mostrar telèfons a les barres
+                </label>
 </div>
 <div id="chartContainer">
 <canvas id="aniversarisChart"></canvas>
 </div>
 </div>
 </div>
-
 <script>
 const correctPassword = "VC1971";
 let dadesAniversaris = [];
 let chart;
 
-// Verificación contraseña
+// Función para verificar contraseña
 function checkPassword() {
     const password = document.getElementById('passwordInput').value;
     if (password === correctPassword) {
@@ -112,7 +369,7 @@ function checkPassword() {
         document.getElementById('passwordModal').style.display = 'none';
         document.querySelector('.mainContent').classList.remove('hidden');
         fetch('aniversaris.json')
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 dadesAniversaris = data;
                 const mesActual = new Date().getMonth() + 1;
@@ -132,7 +389,7 @@ function getNextBirthdays() {
     let proxims = dadesAniversaris.map(d => {
         let cumple = new Date(currentYear, d.mes - 1, d.dia);
         if (cumple < today) cumple.setFullYear(currentYear + 1);
-        return { nom: d.nom, dia: d.dia, mes: d.mes, telefon: d.telefon, fecha: cumple };
+        return { nom: d.nom, dia: d.dia, mes: d.mes, fecha: cumple };
     });
 
     proxims.sort((a, b) => a.fecha - b.fecha);
@@ -161,9 +418,9 @@ function startCountdown() {
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
         countdownEl.innerHTML = `
-            <div class="linea"><span class="icono">🎉</span>Pròxim aniversari: <strong>${nextBday.nom}</strong> (${nextBday.dia} ${getMesName(nextBday.mes)})</div>
-            <div class="linea"><span class="icono">⏳</span>Falten ${days} dies, ${hours}h ${minutes}m ${seconds}s per a l’aniversari de <strong>${nextBday.nom}</strong></div>
-            <div class="linea"><span class="icono">👉</span>Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})</div>
+            🎉 Pròxim aniversari: <strong>${nextBday.nom}</strong> (${nextBday.dia} ${getMesName(nextBday.mes)})<br>
+            ⏳ Falten ${days} dies, ${hours}h ${minutes}m ${seconds}s per a l’aniversari de <strong>${nextBday.nom}</strong><br><br>
+            👉 Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})
         `;
     }
 
@@ -171,7 +428,7 @@ function startCountdown() {
     setInterval(updateCountdown, 1000);
 }
 
-// Funciones gráficas y utilidades
+// Funciones de gráfico (igual que original)
 function getDiesMes(mes, any = 2025) { return new Date(any, mes, 0).getDate(); }
 function getRandomColor() {
     const r = Math.floor(Math.random() * 200 + 55);
@@ -237,16 +494,16 @@ function initializeApp(mesInicial = 1) {
     actualitzarGrafic(mesInicial);
     mesSelector.addEventListener('change', function() { actualitzarGrafic(this.value); });
     document.getElementById('mostrarTelefons').addEventListener('change', function() { actualitzarGrafic(mesSelector.value); });
-    startCountdown();
+    startCountdown(); // 👈 inicia countdown
 }
 
-// Eventos iniciales
+// Event listeners
 document.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('victorCatalaAuth') === 'true') {
         document.getElementById('passwordModal').style.display = 'none';
         document.querySelector('.mainContent').classList.remove('hidden');
         fetch('aniversaris.json')
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 dadesAniversaris = data;
                 const mesActual = new Date().getMonth() + 1;
@@ -264,4 +521,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
