@@ -78,7 +78,12 @@
     line-height:1.4;
       }
 
-        
+        #countdown .hoy {
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: normal;
+        }
+       
         #chartContainer {
             height: 60vh;
             overflow-y: auto;
@@ -405,27 +410,40 @@ function startCountdown() {
     const nextBday = nextBdays[0];
     const secondBday = nextBdays[1];
 
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const diff = nextBday.fecha - now;
+function updateCountdown() {
+    const now = new Date();
+    const hoyTexto = getFormattedToday();
+    const diff = nextBday.fecha - now;
 
-        if (diff <= 0) {
-            countdownEl.innerHTML = "🎂 Avui és l'aniversari de " + nextBday.nom + "!";
-            return;
-        }
+    // comprobar si alguien cumple hoy
+    const cumpleHoy = dadesAniversaris.filter(d => 
+        d.dia === now.getDate() && d.mes === (now.getMonth() + 1)
+    );
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      countdownEl.innerHTML = `
-    🎉 Pròxim aniversari: <strong>${nextBday.nom}</strong> (${nextBday.dia} ${getMesName(nextBday.mes)})<br>
-    ⏳ Falten ${days} dies, ${hours}h ${minutes}m ${seconds}s<br><br>
-    👉 Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})
-`;
-
+    // línea del día actual con estilo discreto
+    let hoyMsg = `<span class="hoy">📅 Avui és <strong>${hoyTexto}</strong></span>`;
+    if (cumpleHoy.length > 0) {
+        const noms = cumpleHoy.map(d => d.nom).join(", ");
+        hoyMsg += `<br>🎂 Avui és l’aniversari de <strong>${noms}</strong>`;
     }
+
+    if (diff <= 0) {
+        countdownEl.innerHTML = hoyMsg + `<br><br>🎉 Avui és l'aniversari de ${nextBday.nom}!`;
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    countdownEl.innerHTML = `
+        ${hoyMsg}<br><br>
+        🎉 Pròxim aniversari: <strong>${nextBday.nom}</strong> (${nextBday.dia} ${getMesName(nextBday.mes)})<br>
+        ⏳ Falten ${days} dies, ${hours}h ${minutes}m ${seconds}s<br><br>
+        👉 Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})
+    `;
+}
 
     updateCountdown();
     setInterval(updateCountdown, 1000);
