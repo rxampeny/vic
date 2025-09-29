@@ -535,7 +535,7 @@ fetch('aniversaris.json')
     const dia = hoy.getDate();
     const mes = getMesName(hoy.getMonth() + 1);
     const any = hoy.getFullYear();
-    return `${dia}-${mes}-${any}`;
+    return `${dia}/${mes}/${any}`;
 }
 
         // NUEVO: prefijo por nombre y unión de nombres en catalán
