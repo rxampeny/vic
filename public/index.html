@@ -531,11 +531,12 @@ fetch('aniversaris.json')
 
         /* ========= NUEVO: utilidades para fecha y countdown (no alteran estructura) ========= */
         function getFormattedToday() {
-            const hoy = new Date();
-            const dia = hoy.getDate();
-            const mes = getMesName(hoy.getMonth() + 1);
-            return `${dia} ${mes}`;
-        }
+    const hoy = new Date();
+    const dia = hoy.getDate();
+    const mes = getMesName(hoy.getMonth() + 1);
+    const any = hoy.getFullYear();
+    return `${dia}-${mes}-${any}`;
+}
 
         // NUEVO: prefijo por nombre y unión de nombres en catalán
         function getPrefixForName(nom) {
@@ -576,7 +577,7 @@ fetch('aniversaris.json')
 
                 // comprobar cumpleañeros de hoy
                 const cumpleHoy = dadesAniversaris.filter(d => d.dia === now.getDate() && d.mes === (now.getMonth() + 1));
-                let hoyMsg = `<span class="hoy">📅 Avui és <strong>${hoyTexto}</strong></span>`;
+                let hoyMsg = `<span class="hoy">📅 Avui és: <strong>${hoyTexto}</strong></span>`;
                 if (cumpleHoy.length > 0) {
                     const nomsArr = cumpleHoy.map(d => d.nom);
                     const nomsFormatats = joinNamesCatalan(nomsArr);
