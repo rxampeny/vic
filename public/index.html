@@ -609,7 +609,7 @@
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                const secondLine = secondBday ? `<br><br>👉 Següent aniversari: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})` : "";
+                const secondLine = secondBday ? `<br><br>👉 Recordatori per part de: <strong>${secondBday.nom}</strong> (${secondBday.dia} ${getMesName(secondBday.mes)})` : "";
 
                 countdownEl.innerHTML = `
                     ${hoyMsg}<br><br>
